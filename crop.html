@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Crop Analyzer - India</title>
+  <style>
+    /* Base & Reset */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #f0f4f8, #d9e2ec);
+      color: #525252;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-image:
+        url("data:image/svg+xml,%3csvg width='400' height='400' viewBox='0 0 200 200' fill='none' xmlns='http://www.w3.org/2000/svg'%3e%3cpath d='M100 10 L130 80 L200 90 L140 140 L160 210 L100 170 L40 210 L60 140 L0 90 L70 80 Z' stroke='%2373747a' stroke-width='2' fill='none' opacity='0.05'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: center 30%;
+      background-attachment: fixed;
+      background-size: 50%;
+    }
+    .container {
+      max-width: 1200px;
+      width: 90%;
+      padding: 0 1rem;
+      margin-top: 3rem;
+      margin-bottom: 4rem;
+      flex-grow: 1;
+      position: relative;
+      background: rgba(255 255 255 / 0.95);
+      border-radius: 0.75rem;
+      box-shadow: 0 8px 24px rgb(0 0 0 / 0.06);
+      backdrop-filter: saturate(150%) blur(12px);
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background: #fff;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      box-shadow: 0 2px 6px rgb(0 0 0 / 0.05);
+      z-index: 1000;
+      font-weight: 700;
+      font-size: 1.5rem;
+      color: #111827;
+      user-select: none;
+      border-radius: 0 0 12px 12px;
+    }
+    header nav a {
+      text-decoration: none;
+      color: #6b7280;
+      margin-left: 1.75rem;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: color 0.25s ease;
+    }
+    header nav a:hover {
+      color: #111827;
+    }
+    /* Language selector styling */
+    #language-select {
+      font-size: 1rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 0.5rem;
+      border: 1.5px solid #d1d5db;
+      color: #374151;
+      background: white;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+      appearance: none;
+      background-image:
+        url("data:image/svg+xml;charset=UTF-8,%3csvg fill='none' stroke='%2373747a' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 1.25rem 1.25rem;
+      margin-left: 1rem;
+      user-select: none;
+    }
+    #language-select:focus {
+      outline: none;
+      border-color: #111827;
+    }
+    .hero {
+      text-align: center;
+      padding-top: 5rem;
+      padding-bottom: 4rem;
+      color: #111827;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 0.75rem;
+      background: rgba(255 255 255 / 0.85);
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.1);
+      backdrop-filter: saturate(180%) blur(12px);
+      user-select: none;
+    }
+    .hero h1 {
+      font-weight: 700;
+      font-size: 2.25rem;
+      margin-bottom: 0.75rem;
+      line-height: 1.2;
+      color: #111827;
+    }
+    .hero p {
+      font-size: 1.125rem;
+      color: #4b5563;
+      margin: 0;
+    }
+    .btn-primary {
+      margin-top: 2.5rem;
+      background: #111827;
+      border: none;
+      color: #fff;
+      font-weight: 700;
+      padding: 0.85rem 2.25rem;
+      font-size: 1.125rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+      user-select: none;
+    }
+    .btn-primary:hover {
+      background: #374151;
+      transform: scale(1.05);
+    }
+    .form-group {
+      margin-top: 3rem;
+      max-width: 360px;
+      margin-left: auto;
+      margin-right: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: #374151;
+    }
+    select#crop-select {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      border-radius: 0.75rem;
+      border: 1.5px solid #d1d5db;
+      color: #374151;
+      appearance: none;
+      background: url("data:image/svg+xml;charset=UTF-8,%3csvg fill='none' stroke='%2373747a' stroke-width='2' viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'%3e%3cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7'%3e%3c/path%3e%3c/svg%3e") no-repeat right 1rem center/1.25rem 1.25rem;
+      cursor: pointer;
+      transition: border-color 0.3s ease;
+      background-origin: content-box;
+      background-position-x: calc(100% - 1rem);
+    }
+    select#crop-select:focus {
+      border-color: #111827;
+      outline: none;
+    }
+    .results-card {
+      background: #ffffff;
+      margin-top: 3.5rem;
+      padding: 2rem;
+      box-shadow: 0 4px 15px rgb(0 0 0 / 0.08);
+      border-radius: 0.75rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      color: #111827;
+      user-select: none;
+    }
+    .results-card h2 {
+      font-weight: 700;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #111827;
+    }
+    .results-card p {
+      font-size: 1.125rem;
+      margin-bottom: 0.75rem;
+      letter-spacing: 0.01em;
+      color: #4b5563;
+    }
+    .yearly-prices {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1rem;
+      gap: 0.25rem;
+      user-select: text;
+      flex-wrap: wrap;
+    }
+    .yearly-price {
+      background: #f3f4f6;
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      flex: 1 1 18%;
+      font-weight: 600;
+      color: #374151;
+      text-align: center;
+      box-shadow: inset 0 0 5px rgb(0 0 0 / 0.05);
+      transition: background-color 0.35s ease;
+      margin-bottom: 0.5rem;
+    }
+    .yearly-price:hover {
+      background-color: #e5e7eb;
+    }
+    footer {
+      padding: 2rem 1rem;
+      font-size: 0.875rem;
+      color: #9ca3af;
+      text-align: center;
+      user-select: none;
+    }
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.75rem;
+      }
+      .results-card {
+        width: 90vw;
+      }
+      .yearly-prices {
+        flex-wrap: wrap;
+      }
+      .yearly-price {
+        flex: 1 1 100%;
+        margin-bottom: 0.5rem;
+      }
+      header {
+        flex-direction: column;
+        font-size: 1.3rem;
+        padding: 0.75rem 1rem;
+        gap: 0.5rem;
+      }
+      #language-select {
+        margin-left: 0 !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div><strong>CropAnalyzer</strong></div>
+    <nav>
+      <a href="#analyze">Analyze</a>
+      <select id="language-select" aria-label="Select Language" title="Select Language">
+        <option value="en" selected>English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="mr">मराठी</option>
+      </select>
+    </nav>
+  </header>
+  <main class="container">
+    <section class="hero" aria-label="Introduction">
+      <h1 data-lang="heading">Analyze Crop Prices Over the Last 5 Years</h1>
+      <p data-lang="subtext">Explore average and yearly price trends of all major crops in India with rates shown in rupees per quintal.</p>
+    </section>
+
+    <section aria-label="Crop selection and analysis" id="analyze">
+      <form id="crop-form" class="form-group" aria-describedby="form-description">
+        <label for="crop-select" data-lang="selectLabel">Select a Crop</label>
+        <select id="crop-select" required aria-required="true" aria-label="Crop Selection Dropdown">
+          <!-- options will be populated by JS -->
+        </select>
+        <button type="submit" class="btn-primary" aria-live="polite" aria-busy="false" id="analyze-button" data-lang="analyzeBtn">Analyze</button>
+      </form>
+
+      <section id="results" class="results-card" role="region" aria-live="polite" aria-atomic="true" hidden>
+        <!-- Dynamic content injected here -->
+      </section>
+    </section>
+  </main>
+  <footer>
+    <span data-lang="footerText">© 2024 CropAnalyzer - Data simulated for demonstration.</span>
+  </footer>
+
+  <script>
+    (() => {
+      // Crop names by language for display
+      const CROPS = {
+        en: [
+          "Rice", "Wheat", "Maize", "Sugarcane", "Cotton", "Pulses", "Oilseeds",
+          "Barley", "Millets", "Tea", "Coffee", "Rubber", "Tobacco", "Coconut", "Groundnut"
+        ],
+        hi: [
+          "चावल", "गेहूं", "मक्का", "गन्ना", "कपास", "दालें", "तेलहन",
+          "जौ", "मिलेट्स", "चाय", "कॉफ़ी", "रबर", "तम्बाकू", "नारियल", "मूंगफली"
+        ],
+        mr: [
+          "तांदूळ", "गहू", "मका", "ऊस", "कापूस", "डाळी", "तेलझड",
+          "बार्ली", "मडई", "चहा", "कॉफी", "रबर", "तेंबाकू", "नारळ", "शेंगदाणा"
+        ]
+      };
+
+      // Translation strings for UI text
+      const translations = {
+        heading: {
+          en: "Analyze Crop Prices Over the Last 5 Years",
+          hi: "पिछले 5 वर्षों में फसल की कीमतों का विश्लेषण करें",
+          mr: "मागील 5 वर्षांतील पीक किमतींचा विश्लेषण करा"
+        },
+        subtext: {
+          en: "Explore average and yearly price trends of all major crops in India with rates shown in rupees per quintal.",
+          hi: "भारत की सभी प्रमुख फसलों के औसत और वार्षिक मूल्य रुझानों का पता लगाएं, कीमतें रुपये प्रति क्विंटल में प्रदर्शित हैं।",
+          mr: "भारतातील सर्व प्रमुख पिकांच्या सरासरी व वार्षिक किंमत प्रवाहांचा अभ्यास करा, दर रुपये प्रति क्विंटल दाखवले आहेत."
+        },
+        selectLabel: {
+          en: "Select a Crop",
+          hi: "एक फसल चुनें",
+          mr: "पीक निवडा"
+        },
+        analyzeBtn: {
+          en: "Analyze",
+          hi: "विश्लेषण करें",
+          mr: "विश्लेषण करा"
+        },
+        footerText: {
+          en: "© 2024 CropAnalyzer - Data simulated for demonstration.",
+          hi: "© 2024 क्रॉपएनालाइजर - डाटा प्रदर्शन के लिए अनुकरण किया गया है।",
+          mr: "© 2024 क्रॉपएनालायझर - डेटा प्रदर्शनासाठी अनुकरण केले आहे."
+        },
+        averagePriceLabel: {
+          en: "Average Price (last 5 years):",
+          hi: "औसत कीमत (पिछले 5 वर्ष):",
+          mr: "सरासरी किंमत (मागील 5 वर्षे):"
+        },
+        yearlyPricesLabel: {
+          en: "Yearly Prices (₹/quintal):",
+          hi: "वार्षिक मूल्य (₹/क्विंटल):",
+          mr: "वार्षिक दर (₹/क्विंटल):"
+        },
+        cropLabel: {
+          en: "Crop:",
+          hi: "फसल:",
+          mr: "पीक:"
+        },
+        yearTitlePrefix: {
+          en: "Year ",
+          hi: "वर्ष ",
+          mr: "वर्ष "
+        }
+      };
+
+      // Simulate 5-year price data keyed by English crop names
+      function generateSimulatedData() {
+        const data = {};
+        const baseCrops = CROPS.en; // Use English names as keys
+        for (const crop of baseCrops) {
+          let basePrice = Math.floor(Math.random() * 5000) + 1000; // 1000 to 6000
+          const prices = [];
+          for (let i = 0; i < 5; i++) {
+            const fluctuation = (Math.random() * 0.2) + 0.9; // ±10%
+            let price = Math.round(basePrice * fluctuation);
+            prices.push(price);
+            basePrice += Math.floor(Math.random() * 201) - 100; // ±100
+            if (basePrice < 500) basePrice = 500;
+          }
+          data[crop] = prices;
+        }
+        return data;
+      }
+
+      const cropPriceData = generateSimulatedData();
+
+      const languageSelect = document.getElementById("language-select");
+      const cropSelect = document.getElementById("crop-select");
+      const results = document.getElementById("results");
+
+      // Populate crop select options based on selected language (value always English for lookup)
+      function populateCropOptions(lang) {
+        cropSelect.innerHTML = "";
+        const currentCrops = CROPS[lang] || CROPS.en;
+        for (let i = 0; i < currentCrops.length; i++) {
+          const option = document.createElement("option");
+          option.value = CROPS.en[i]; // value always English, for analysis lookup
+          option.textContent = currentCrops[i];
+          cropSelect.appendChild(option);
+        }
+      }
+
+      // Update page UI text translations
+      function translatePage(lang) {
+        document.querySelectorAll("[data-lang]").forEach(el => {
+          const key = el.getAttribute("data-lang");
+          if(translations[key] && translations[key][lang]) {
+            el.textContent = translations[key][lang];
+          }
+        });
+      }
+
+      // Analyze crop by English name
+      function analyzeCrop(cropName) {
+        const prices = cropPriceData[cropName];
+        if (!prices) {
+          throw new Error("Crop data not found");
+        }
+        const total = prices.reduce((acc, val) => acc + val, 0);
+        const avg = (total / prices.length).toFixed(2);
+        return { crop: cropName, average_price: avg, yearly_prices: prices };
+      }
+
+      // Show analysis results with translated crop name and labels
+      function showResults(analysis, lang) {
+        const index = CROPS.en.indexOf(analysis.crop);
+        const cropNameInLang = (index >= 0) ? CROPS[lang][index] : analysis.crop;
+        results.innerHTML = `
+          <h2>${translations.cropLabel[lang]} ${cropNameInLang}</h2>
+          <p><strong>${translations.averagePriceLabel[lang]}</strong> ₹${analysis.average_price} per quintal</p>
+          <p><strong>${translations.yearlyPricesLabel[lang]}</strong></p>
+          <div class="yearly-prices">
+            ${analysis.yearly_prices.map((p, i) => `<div class="yearly-price" title="${translations.yearTitlePrefix[lang]}${i + 1}">${p}</div>`).join('')}
+          </div>
+        `;
+        results.hidden = false;
+      }
+
+      // Form submit handler to analyze selected crop
+      function handleFormSubmit(event) {
+        event.preventDefault();
+        const selectedCropValue = cropSelect.value;
+        const lang = languageSelect.value;
+        if (!selectedCropValue) return;
+        try {
+          const analysis = analyzeCrop(selectedCropValue);
+          showResults(analysis, lang);
+        } catch (e) {
+          alert(e.message);
+        }
+      }
+
+      // Language change handler: updates UI text and crop options, clears results
+      function handleLanguageChange() {
+        const lang = languageSelect.value;
+        translatePage(lang);
+        populateCropOptions(lang);
+        results.hidden = true;
+      }
+
+      function init() {
+        translatePage("en");
+        populateCropOptions("en");
+        document.getElementById("crop-form").addEventListener("submit", handleFormSubmit);
+        languageSelect.addEventListener("change", handleLanguageChange);
+      }
+
+      window.addEventListener("DOMContentLoaded", init);
+    })();
+  </script>
+</body>
+</html>
+
